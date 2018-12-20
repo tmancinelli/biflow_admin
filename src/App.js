@@ -31,7 +31,7 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
         ({ api }) => {
           const dateFields = [
             { entity: "people", fields: [ "dateBirth", "dateDeath" ]},
-            { entity: "manuscripts", fields: [ "dateManuscript" ]},
+            { entity: "manuscripts", fields: [ "date" ]},
           ];
 
           dateFields.forEach(entity => {
