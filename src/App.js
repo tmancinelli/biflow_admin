@@ -18,9 +18,9 @@ const dateRangeValidator = (value, allValues) => {
       return null;
     }
 
-    var regexp = /^(>\s*\d\d\d\d|<\s*\d\d\d\d|\d\d\d\d\s*<>\s*\d\d\d\d|\d\d-\d\d-\d\d\d\d|~\s*\d\d\d\d)$/
+    var regexp = /^(>\s*\d\d\d\d|<\s*\d\d\d\d|\d\d\d\d\s*<>\s*\d\d\d\d|\d\d-\d\d-\d\d\d\d|~\s*\d\d\d\d|\d\d\d\d)$/
     if (regexp.exec(value) === null) {
-      return 'The input does not follow the date constraints. The supported formats are "< 1500", "> 1500", "1300 <> 1500", "10-04-1516", "~1543".';
+      return 'The input does not follow the date constraints. The supported formats are "< 1500", "> 1500", "1300 <> 1500", "10-04-1516", "~1300", "1522".';
     }
 
     return null;
