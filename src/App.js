@@ -4,6 +4,7 @@ import { HydraAdmin, hydraClient, fetchHydra as baseFetchHydra } from '@api-plat
 import { TextInput } from 'react-admin';
 import authProvider from './authProvider';
 import { Redirect } from 'react-router-dom';
+import EllipsisTextField from '../src/EllipsisTextField.js';
 
 const entrypoint = 'https://sandbox.cceh.uni-koeln.de';
 const fetchHeaders = {'Authorization': `Bearer ${window.localStorage.getItem('token')}`};
@@ -29,6 +30,7 @@ const dataProvider = api => hydraClient(api, fetchHydra);
 const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: new Headers(fetchHeaders) })
     .then(
         ({ api }) => {
+          // Let's implement our data input validator for these fields:
           const dateFields = [
             { entity: "people", fields: [ "dateBirth", "dateDeath" ]},
             { entity: "manuscripts", fields: [ "date" ]},
@@ -39,8 +41,20 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
             entity.fields.forEach(fieldName => {
               const field = resource.fields.find(({ name }) => fieldName === name)
               field.input = props => (
-                <TextInput source={field.name} label={field.name} validate={dateRangeValidator} {...props} />
+                <TextInput key={field.name} source={field.name} label={field.name} validate={dateRangeValidator} {...props} />
               )
+            });
+          });
+
+          // Let's ellipse the text inputs.
+          api.resources.forEach(resource => {
+            const fields = resource.fields.filter(({ range }) => range === "http://www.w3.org/2001/XMLSchema#string");
+            fields.forEach(field => {
+              field.field = props => (
+                <EllipsisTextField key={field.name} source={field.name} {...props} />
+              )
+
+              field.field.defaultProps = { addLabel: true, };
             });
           });
 
