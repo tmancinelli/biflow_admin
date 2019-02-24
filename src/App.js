@@ -5,6 +5,7 @@ import { TextInput } from 'react-admin';
 import authProvider from './authProvider';
 import { Redirect } from 'react-router-dom';
 import EllipsisTextField from '../src/EllipsisTextField.js';
+import { LongTextInput } from 'react-admin';
 
 const entrypoint = 'https://sandbox.cceh.uni-koeln.de';
 const fetchHeaders = {'Authorization': `Bearer ${window.localStorage.getItem('token')}`};
@@ -58,6 +59,23 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
             });
           });
 
+          // Let's implement our data input validator for these fields:
+          const multilineTextInputs = [
+            { entity: "works", fields: [ "content", "otherTranslations" ]},
+            { entity: "expressions", fields: [ "incipit", "explicit", "textualHistory", "manuscriptTradition", "editionHistory" ]},
+            { entity: "manuscripts", fields: [ "note" ]},
+          ];
+
+          multilineTextInputs.forEach(entity => {
+            const resource = api.resources.find(({ name }) => entity.entity === name);
+            entity.fields.forEach(fieldName => {
+              const field = resource.fields.find(({ name }) => fieldName === name)
+              field.input = props => (
+                <LongTextInput key={field.name} source={field.name} label={field.name} {...props} />
+              )
+            });
+          });
+
           // List of the main resources and their position in the UI. Any other
           // resource will be sorted by alphabetic order.
           let mainResources = [
@@ -70,14 +88,14 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
 
             // Both a and b resources are part of the main ones. Let's make 'a'
             // to win.
-            if (aPos != -1 && bPos != -1) return aPos > bPos;
+            if (aPos !== -1 && bPos !== -1) return aPos > bPos;
 
             // Only 'a' is one of the main resources. It wins against anything
             // else.
-            if (aPos != -1) return false;
+            if (aPos !== -1) return false;
 
             // 'b' is one of the main resources. It wins.
-            if (bPos != -1) return true;
+            if (bPos !== -1) return true;
 
             // All the rest is alphabetically sorted.
             return a.name > b.name;
