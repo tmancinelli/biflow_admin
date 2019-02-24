@@ -8,7 +8,12 @@ import EllipsisTextField from '../src/EllipsisTextField.js';
 import { LongTextInput } from 'react-admin';
 
 const entrypoint = 'https://sandbox.cceh.uni-koeln.de';
-const fetchHeaders = {'Authorization': `Bearer ${window.localStorage.getItem('token')}`};
+
+const fetchHeaders = {};
+if ('token' in window.localStorage) {
+  fetchHeaders['Authorization'] = `Bearer ${window.localStorage.getItem('token')}`;
+}
+
 const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
     ...options,
     headers: new Headers(fetchHeaders),
