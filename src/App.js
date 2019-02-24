@@ -58,6 +58,31 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
             });
           });
 
+          // List of the main resources and their position in the UI. Any other
+          // resource will be sorted by alphabetic order.
+          let mainResources = [
+            "people", "works", "expressions", "libraries", "manuscripts"
+          ];
+
+          api.resources.sort((a, b) => {
+            let aPos = mainResources.indexOf(a.name);
+            let bPos = mainResources.indexOf(b.name);
+
+            // Both a and b resources are part of the main ones. Let's make 'a'
+            // to win.
+            if (aPos != -1 && bPos != -1) return aPos > bPos;
+
+            // Only 'a' is one of the main resources. It wins against anything
+            // else.
+            if (aPos != -1) return false;
+
+            // 'b' is one of the main resources. It wins.
+            if (bPos != -1) return true;
+
+            // All the rest is alphabetically sorted.
+            return a.name > b.name;
+          });
+
           return { api };
         },
         (result) => {
