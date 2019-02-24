@@ -9,6 +9,7 @@ import { LongTextInput } from 'react-admin';
 
 const entrypoint = 'https://sandbox.cceh.uni-koeln.de';
 
+// Let's set the authentication header only if it exists.
 const fetchHeaders = {};
 if ('token' in window.localStorage) {
   fetchHeaders['Authorization'] = `Bearer ${window.localStorage.getItem('token')}`;
@@ -127,11 +128,24 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
         },
     );
 
+// List of fields we want to hide from the list.
+const hiddenFromList = [
+  { entity: "people", fields: [ "translations", "codices", "nicknames", ]},
+  { entity: "works", fields: [ "content", "otherTranslations", ]},
+  { entity: "expressions", fields: [ "translator", "incipit", "explicit", "textualHistory", "manuscriptTradition", "editionHistory", "bibliographies", "textualTypology", ]},
+];
+
+const listFieldFilter = (resource, field) => {
+  const hiddenResource = hiddenFromList.find(hidden => hidden.entity === resource.name);
+  return !hiddenResource || !hiddenResource.fields.includes(field.name);
+};
+
 export default props => (
     <HydraAdmin
         apiDocumentationParser={apiDocumentationParser}
         authProvider={authProvider}
         entrypoint={entrypoint}
         dataProvider={dataProvider}
+        listFieldFilter={listFieldFilter}
     />
 );
