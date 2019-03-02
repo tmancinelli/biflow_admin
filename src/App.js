@@ -20,12 +20,26 @@ const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
     headers: new Headers(fetchHeaders),
 });
 
+// Data range validator supports these types:
+// >1234
+// >~1234
+// <1234
+// <~1234
+// 1234<>2345
+// ~1234<>2345
+// 1234<>~2345
+// ~1234<>~2345
+// 01-01-1234
+// 01-1234
+// ~1234
+// 1234
+// Before and after ~, <, >, <> spaces are supported.
 const dateRangeValidator = (value, allValues) => {
     if (!value) {
       return null;
     }
 
-    var regexp = /^(>\s*\d\d\d\d|<\s*\d\d\d\d|\d\d\d\d\s*<>\s*\d\d\d\d|\d\d-\d\d-\d\d\d\d|~\s*\d\d\d\d|\d\d\d\d)$/
+    var regexp = /^(>\s*~?\s*\d\d\d\d|<\s*~?\s*\d\d\d\d|~?\s*\d\d\d\d\s*<>\s*~?\s*\d\d\d\d|\d\d-\d\d-\d\d\d\d|\d\d-\d\d\d\d|~\s*\d\d\d\d|\d\d\d\d)$/
     if (regexp.exec(value) === null) {
       return 'The input does not follow the date constraints. The supported formats are "< 1500", "> 1500", "1300 <> 1500", "10-04-1516", "~1300", "1522".';
     }

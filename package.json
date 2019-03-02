@@ -1,12 +1,12 @@
 {
-  "name": "admin",
+  "name": "biflow admin",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@api-platform/admin": "https://github.com/bakulf/api-platform-admin",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "react-scripts": "^2.1.3"
+    "@api-platform/admin": "^0.6.2",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
+    "react-scripts": "2.1.5"
   },
   "scripts": {
     "start": "react-scripts start",
