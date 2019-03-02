@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
 import { HydraAdmin, hydraClient, fetchHydra as baseFetchHydra } from '@api-platform/admin';
 import { TextInput } from 'react-admin';
@@ -6,18 +6,19 @@ import authProvider from './authProvider';
 import { Redirect } from 'react-router-dom';
 import EllipsisTextField from '../src/EllipsisTextField.js';
 import { LongTextInput } from 'react-admin';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const entrypoint = 'https://sandbox.cceh.uni-koeln.de';
 
 // Let's set the authentication header only if it exists.
-const fetchHeaders = {};
+const fetchHeaders = new Headers();
 if ('token' in window.localStorage) {
-  fetchHeaders['Authorization'] = `Bearer ${window.localStorage.getItem('token')}`;
+  fetchHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
 }
 
 const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
     ...options,
-    headers: new Headers(fetchHeaders),
+    headers: fetchHeaders,
 });
 
 // Data range validator supports these types:
@@ -48,7 +49,7 @@ const dateRangeValidator = (value, allValues) => {
 }
 
 const dataProvider = api => hydraClient(api, fetchHydra);
-const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: new Headers(fetchHeaders) })
+const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: fetchHeaders })
     .then(
         ({ api }) => {
           // Let's implement our data input validator for these fields:
@@ -154,12 +155,45 @@ const listFieldFilter = (resource, field) => {
   return !hiddenResource || !hiddenResource.fields.includes(field.name);
 };
 
-export default props => (
-    <HydraAdmin
+class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      ready: false
+    }
+  }
+
+  // Login check at the first loading.
+  componentDidMount() {
+    if (!('token' in window.localStorage)) {
+      this.setState({ready: true});
+      return;
+    }
+
+    fetch(entrypoint, { headers: fetchHeaders }).then(r => {
+      this.setState({ready: true});
+      if (r.status === 401) {
+        delete localStorage.token;
+        window.location.reload();
+      }
+      this.setState({ready: true});
+    });
+  }
+
+  render() {
+    if (this.state.ready === false) {
+      return <CircularProgress />
+    }
+
+    return <HydraAdmin
         apiDocumentationParser={apiDocumentationParser}
         authProvider={authProvider}
         entrypoint={entrypoint}
         dataProvider={dataProvider}
         listFieldFilter={listFieldFilter}
-    />
-);
+      />
+  }
+}
+
+export default App;
