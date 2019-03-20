@@ -6,6 +6,7 @@
     "@api-platform/admin": "^0.6.2",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
+    "react-https-redirect": "^1.1.0",
     "react-scripts": "2.1.5"
   },
   "scripts": {

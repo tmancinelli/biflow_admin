@@ -7,8 +7,9 @@ import { Redirect } from 'react-router-dom';
 import EllipsisTextField from '../src/EllipsisTextField.js';
 import { LongTextInput } from 'react-admin';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import HttpsRedirect from 'react-https-redirect';
 
-const entrypoint = 'https://sandbox.cceh.uni-koeln.de';
+const entrypoint = 'https://sandbox.cceh.uni-koeln.de/api';
 
 // Let's set the authentication header only if it exists.
 const fetchHeaders = new Headers();
@@ -40,7 +41,7 @@ const dateRangeValidator = (value, allValues) => {
       return null;
     }
 
-    var regexp = /^(>\s*~?\s*\d\d\d\d|<\s*~?\s*\d\d\d\d|~?\s*\d\d\d\d\s*<>\s*~?\s*\d\d\d\d|\d\d-\d\d-\d\d\d\d|\d\d-\d\d\d\d|~\s*\d\d\d\d|\d\d\d\d)$/
+    var regexp = /^(>\s*~?\s*\d\d\d\d|<\s*~?\s*\d\d\d\d|(~?\s*\d\d\d\d|\d\d-\d\d-\d\d\d\d|\d\d-\d\d\d\d)\s*<>\s*(~?\s*\d\d\d\d|\d\d-\d\d-\d\d\d\d|\d\d-\d\d\d\d)|\d\d-\d\d-\d\d\d\d|\d\d-\d\d\d\d|~\s*\d\d\d\d|\d\d\d\d|)$/
     if (regexp.exec(value) === null) {
       return 'The input does not follow the date constraints. The supported formats are "< 1500", "> 1500", "1300 <> 1500", "10-04-1516", "~1300", "1522".';
     }
@@ -55,7 +56,7 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
           // Let's implement our data input validator for these fields:
           const dateFields = [
             { entity: "people", fields: [ "dateBirth", "dateDeath" ]},
-            { entity: "manuscripts", fields: [ "date" ]},
+            { entity: "localisations", fields: [ "date" ]},
           ];
 
           dateFields.forEach(entity => {
@@ -85,6 +86,7 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
             { entity: "works", fields: [ "content", "otherTranslations" ]},
             { entity: "expressions", fields: [ "incipit", "explicit", "textualHistory", "manuscriptTradition", "editionHistory" ]},
             { entity: "manuscripts", fields: [ "note" ]},
+            { entity: "localisations", fields: [ "note" ]},
           ];
 
           multilineTextInputs.forEach(entity => {
@@ -100,7 +102,7 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
           // List of the main resources and their position in the UI. Any other
           // resource will be sorted by alphabetic order.
           let mainResources = [
-            "people", "works", "expressions", "libraries", "manuscripts"
+            "people", "works", "expressions", "libraries", "manuscripts", "localisations"
           ];
 
           api.resources.sort((a, b) => {
@@ -183,16 +185,18 @@ class App extends Component {
 
   render() {
     if (this.state.ready === false) {
-      return <CircularProgress />
+      return <HttpsRedirect><CircularProgress /></HttpsRedirect>
     }
 
-    return <HydraAdmin
-        apiDocumentationParser={apiDocumentationParser}
-        authProvider={authProvider}
-        entrypoint={entrypoint}
-        dataProvider={dataProvider}
-        listFieldFilter={listFieldFilter}
-      />
+    return <HttpsRedirect>
+        <HydraAdmin
+          apiDocumentationParser={apiDocumentationParser}
+          authProvider={authProvider}
+          entrypoint={entrypoint}
+          dataProvider={dataProvider}
+          listFieldFilter={listFieldFilter}
+        />
+      </HttpsRedirect>
   }
 }
 
