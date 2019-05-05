@@ -5,10 +5,10 @@ import { TextInput } from 'react-admin';
 import authProvider from './authProvider';
 import { Redirect } from 'react-router-dom';
 import EllipsisTextField from '../src/EllipsisTextField.js';
-import { LongTextInput } from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-const entrypoint = 'https://sandbox.cceh.uni-koeln.de';
+const entrypoint = 'https://sandbox.cceh.uni-koeln.de/api';
 
 // Let's set the authentication header only if it exists.
 const fetchHeaders = new Headers();
@@ -48,6 +48,26 @@ const dateRangeValidator = (value, allValues) => {
     return null;
 }
 
+var toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  //['blockquote', 'code-block'],
+
+  //[{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  //[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+  [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+  //[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+  //[{ 'direction': 'rtl' }],                         // text direction
+
+  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  //[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+  //[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+  //[{ 'font': [] }],
+  //[{ 'align': [] }],
+
+  ['clean']                                         // remove formatting button
+];
+
 const dataProvider = api => hydraClient(api, fetchHydra);
 const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: fetchHeaders })
     .then(
@@ -84,7 +104,7 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
           const multilineTextInputs = [
             { entity: "works", fields: [ "content", "otherTranslations" ]},
             { entity: "expressions", fields: [ "incipit", "explicit", "textualHistory", "manuscriptTradition", "editionHistory" ]},
-            { entity: "manuscripts", fields: [ "note" ]},
+            { entity: "manuscripts", fields: [ "physDescription", "history", "scriptDescription", "decoDescription", "collationDescription", "note" ]},
           ];
 
           multilineTextInputs.forEach(entity => {
@@ -92,8 +112,13 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
             entity.fields.forEach(fieldName => {
               const field = resource.fields.find(({ name }) => fieldName === name)
               field.input = props => (
-                <LongTextInput key={field.name} source={field.name} label={field.name} {...props} />
+                <RichTextInput key={field.name} source={field.name} label={field.name} toolbar={toolbarOptions} {...props} />
               )
+
+              field.input.defaultProps = {
+                addField: true,
+                addLabel: true
+              };
             });
           });
 

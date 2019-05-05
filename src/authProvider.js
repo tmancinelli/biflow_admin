@@ -1,7 +1,7 @@
 import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK } from 'react-admin';
 
 // Change this to be your own login check route.
-const login_uri = 'https://sandbox.cceh.uni-koeln.de/login_check';
+const login_uri = 'https://sandbox.cceh.uni-koeln.de/api/login_check';
 
 export default (type, params) => {
   switch (type) {
