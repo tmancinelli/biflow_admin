@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
-import { HydraAdmin, hydraClient, fetchHydra as baseFetchHydra } from '@api-platform/admin';
+import parseHydraDocumentation from './api-platform-api-doc-parser/hydra/parseHydraDocumentation';
+//import { HydraAdmin, hydraClient, fetchHydra as baseFetchHydra } from './api-platform-admin/hydra/HydraAdmin';
+import HydraAdmin from './api-platform-admin/hydra/HydraAdmin';
+import hydraClient from './api-platform-admin/hydra/hydraClient';
+import fetchHydra from './api-platform-admin/hydra/fetchHydra';
 import { TextInput } from 'react-admin';
 import authProvider from './authProvider';
 import { Redirect } from 'react-router-dom';
@@ -9,7 +12,7 @@ import RichTextInput from 'ra-input-rich-text';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import HttpsRedirect from 'react-https-redirect';
 
-const entrypoint = 'https://sandbox.cceh.uni-koeln.de/api';
+const entrypoint = 'http://mizar.unive.it/catalogo_biflow/api/public/api';
 
 // Let's set the authentication header only if it exists.
 const fetchHeaders = new Headers();
@@ -17,7 +20,7 @@ if ('token' in window.localStorage) {
   fetchHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
 }
 
-const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
+const myFetchHydra = (url, options = {}) => fetchHydra(url, {
     ...options,
     headers: fetchHeaders,
 });
@@ -69,7 +72,7 @@ var toolbarOptions = [
   ['clean']                                         // remove formatting button
 ];
 
-const dataProvider = api => hydraClient(api, fetchHydra);
+const dataProvider = api => hydraClient(api, myFetchHydra);
 const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: fetchHeaders })
     .then(
         ({ api }) => {
@@ -210,10 +213,11 @@ class App extends Component {
 
   render() {
     if (this.state.ready === false) {
-      return <HttpsRedirect><CircularProgress /></HttpsRedirect>
+      return <CircularProgress />
     }
 
-    return <HttpsRedirect>
+    return (
+      <HttpsRedirect>
         <HydraAdmin
           apiDocumentationParser={apiDocumentationParser}
           authProvider={authProvider}
@@ -222,6 +226,7 @@ class App extends Component {
           listFieldFilter={listFieldFilter}
         />
       </HttpsRedirect>
+    );
   }
 }
 

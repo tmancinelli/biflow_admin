@@ -197,7 +197,6 @@ export default ({entrypoint, resources = []}, httpClient = fetchHydra) => {
           pagination: {page, perPage},
           sort: {field, order},
         } = params;
-alert(perPage);
 
         if (order) collectionUrl.searchParams.set(`order[${field}]`, order);
         if (page) collectionUrl.searchParams.set('page', page);
