@@ -16,6 +16,7 @@ const AdminBuilder = props => {
     parameterFactory,
     title = api.title,
     resources = api.resources.filter(({deprecated}) => !deprecated),
+    listFieldFilter,
   } = props;
 
   return (
@@ -27,6 +28,7 @@ const AdminBuilder = props => {
           fieldFactory,
           inputFactory,
           parameterFactory,
+          listFieldFilter,
         ),
       )}
     </Admin>
