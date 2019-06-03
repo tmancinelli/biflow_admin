@@ -12,7 +12,7 @@ import RichTextInput from 'ra-input-rich-text';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import HttpsRedirect from 'react-https-redirect';
 
-const entrypoint = 'http://mizar.unive.it/catalogo_biflow/api/public/api';
+const entrypoint = 'https://mizar.unive.it/catalogo_biflow/api/public/api';
 
 // Let's set the authentication header only if it exists.
 const fetchHeaders = new Headers();

@@ -24,7 +24,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "homepage": "http://sandbox.cceh.uni-koeln.de/admin/",
+  "homepage": "https://mizar.unive.it/catalogo_biflow/admin/",
   "browserslist": {
     "production": [
       ">0.2%",
