@@ -11,6 +11,11 @@ import EllipsisTextField from '../src/EllipsisTextField.js';
 import RichTextInput from 'ra-input-rich-text';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import HttpsRedirect from 'react-https-redirect';
+import {JssProvider, createGenerateClassName} from 'react-jss'
+
+// One single Class generator function otherwise we will have funny CSS
+// effects...
+const generateClassName = createGenerateClassName()
 
 const entrypoint = 'https://mizar.unive.it/catalogo_biflow/api/public/api';
 
@@ -217,15 +222,17 @@ class App extends Component {
     }
 
     return (
-      <HttpsRedirect>
-        <HydraAdmin
-          apiDocumentationParser={apiDocumentationParser}
-          authProvider={authProvider}
-          entrypoint={entrypoint}
-          dataProvider={dataProvider}
-          listFieldFilter={listFieldFilter}
-        />
-      </HttpsRedirect>
+      <JssProvider generateClassName={generateClassName}>
+        <HttpsRedirect>
+          <HydraAdmin
+            apiDocumentationParser={apiDocumentationParser}
+            authProvider={authProvider}
+            entrypoint={entrypoint}
+            dataProvider={dataProvider}
+            listFieldFilter={listFieldFilter}
+          />
+        </HttpsRedirect>
+      </JssProvider>
     );
   }
 }
