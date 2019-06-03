@@ -61,9 +61,12 @@ const List = props => {
     addIdField = false === hasIdentifier(fields),
   } = resolveProps(props);
 
+  const PostPagination = ({ page, perPage, total, setPage }) => null;
+
   return (
     <BaseList
       {...props}
+      pagination={<PostPagination />}
       filters={<ListFilter options={{parameterFactory, parameters}} />}>
       <Datagrid>
         {addIdField && (
