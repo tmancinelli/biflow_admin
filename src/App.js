@@ -182,7 +182,14 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
 const hiddenFromList = [
   { entity: "people", fields: [ "translations", "codices", "nicknames", ]},
   { entity: "works", fields: [ "content", "otherTranslations", ]},
-  { entity: "expressions", fields: [ "translator", "incipit", "explicit", "textualHistory", "manuscriptTradition", "editionHistory", "bibliographies", "textualTypology", ]},
+  { entity: "expressions", fields: [
+    "translator", "incipit", "explicit", "textualHistory",
+    "manuscriptTradition", "editionHistory", "bibliographies",
+    "textualTypology", "localisations", "attributions"]},
+  { entity: "manuscripts", fields: [ "typology", "place", "material",
+  "physDescription", "history", "width", "height", "scriptDescription",
+  "decoDescription", "collationDescription", "binding", "ruledLines",
+  "ruledLineTechnique", "checkStatus", "note", "content", "bibliographies", "localisations"]},
 ];
 
 const listFieldFilter = (resource, field) => {
